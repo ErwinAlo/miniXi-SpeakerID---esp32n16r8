@@ -1,7 +1,7 @@
 # Documentación del proceso y entrenamiento
 
 ## 1. ¿Qué es este proyecto?
-Este proyecto es un identificador de hablantes basado en un microcontrolador ESP32 con PSRAM. Usa audio grabado de 5 clases (`hija_1`, `hijo_1`, `mama`, `papa`, `ruido`) y entrena un modelo ligero que se ejecuta en el firmware.
+Este proyecto es un identificador de hablantes basado en un microcontrolador ESP32 con PSRAM. Usa audio grabado de 4 clases (`hija_1`, `hijo_1`, `mama`, `papa`) y entrena un modelo ligero que se ejecuta en el firmware.
 
 El pipeline se divide en dos etapas principales:
 - `Process`: carga y preprocesa el dataset, genera características tipo Xi-vector.
@@ -9,13 +9,13 @@ El pipeline se divide en dos etapas principales:
 
 ## 2. Carga del dataset
 
-El dataset se encuentra en `dataset_fam/` dentro de `HablantesFamConRuido`.
+El dataset se encuentra en `dataset_fam/` 
 Estructura:
 - `dataset_fam/hija_1/`
 - `dataset_fam/hijo_1/`
 - `dataset_fam/mama/`
 - `dataset_fam/papa/`
-- `dataset_fam/ruido/`
+
 
 Cada carpeta contiene archivos WAV de audio. El notebook `Train/model.ipynb` carga automáticamente las clases presentes en `dataset_fam` con:
 ```python
