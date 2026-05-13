@@ -1,0 +1,82 @@
+ventilador
+TV de fondo
+gente hablando lejos
+cocina
+calle
+eco de cuarto
+computadora
+aire acondicionado
+
+-----------------------------------------------------------------
+
+
+Utilizar preguntas simples y naturales sobre temas cotidianos resultó mejor tanto para las personas como para el modelo de reconocimiento de hablantes.
+
+Para las personas, especialmente niños o miembros de una familia sin experiencia técnica, este tipo de preguntas hace que hablar sea más cómodo y natural, evitando que lean frases forzadas o repetitivas. Al sentirse más relajados, la voz se escucha más auténtica y cercana a cómo hablan normalmente en la vida diaria.
+
+Para el modelo, esto también representa una ventaja importante, ya que permite capturar variaciones reales de la voz como diferentes entonaciones, ritmos, emociones y formas de expresarse. A diferencia de grabaciones largas y repetitivas, las respuestas naturales generan muestras más variadas y menos similares entre sí, lo que ayuda al modelo a aprender características reales de cada hablante y no únicamente patrones específicos de una sola grabación.
+
+Además, al usar conversaciones cortas y variadas, el proceso de grabación se vuelve más rápido, menos cansado y más sencillo de realizar para cualquier integrante de la familia, facilitando la creación de un dataset más diverso y útil para el entrenamiento del sistema.
+
+
+Más variedad real
+
+Cada audio corto tiene diferencias:
+
+distinta entonación
+diferente volumen
+pausas
+velocidad al hablar
+respiración
+posición del micrófono
+ambiente diferente
+
+
+
+Saludo e inicio de conversación
+
+Pregunta:
+“Hola, ¿cómo te has sentido estos días? ¿Qué me quieres contar sobre ti?”
+
+Pues yo estoy bien, hoy tuve clases en la mañana y después llegué a la casa.
+Ahorita estoy ayudando con unas grabaciones para un proyecto.”
+
+-----------------------------------------------------------------------------
+Últimas vacaciones
+
+“¿Qué recuerdas de tus últimas vacaciones o de una salida con tu familia?”
+Ejemplo:
+
+“Las últimas vacaciones fui con mi familia a visitar a unos familiares.
+Salimos temprano y estuvimos caminando bastante.
+También probamos comida diferente y regresamos ya en la noche.”
+-----------------------------------------------------------------------------
+3. Gustos
+
+“¿Qué cosas te gusta hacer en tu tiempo libre?”
+
+Ejemplo:
+
+“Me gusta mucho escuchar música mientras trabajo o estudio.
+También me gustan los videojuegos y ver series cuando tengo tiempo libre.
+A veces salgo a caminar para distraerme.”
+-----------------------------------------------------------------------------
+4. Molestia de esta semana
+
+“¿Hubo algo esta semana que te molestara o te hiciera sentir incómodo?”
+
+Ejemplo:
+
+“Esta semana me molestó que hubo mucho ruido mientras intentaba trabajar.
+También tuve algunos problemas con unas tareas y perdí tiempo arreglando errores.
+Pero al final sí pude avanzar.”
+-----------------------------------------------------------------------------
+5. Rutina del día
+
+“¿Cómo fue tu día hoy? ¿Qué hiciste desde que te levantaste?”
+Ejemplo:
+
+“Hoy me levanté temprano y desayuné antes de empezar mis actividades.
+Después estuve trabajando en mi proyecto y más tarde fui a comer.
+En la noche probablemente siga estudiando un rato.”
+

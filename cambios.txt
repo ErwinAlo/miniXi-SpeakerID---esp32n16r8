@@ -1,0 +1,17 @@
+
+
+Cambios Realizados
+
+Se revisó y ajustó el flujo completo entre el entrenamiento en Python y la inferencia en el ESP32, porque el modelo no estaba recibiendo exactamente las mismas características con las que fue entrenado.
+
+Primero, se corrigió el cálculo de MFCC. El código del ESP32 estaba haciendo un recorte de ventanas dentro de `MFCC.cpp` y luego otro recorte adicional en `main.cpp`. Esto podía alterar las características finales antes de entrar al modelo. Se dejó el cálculo MFCC completo en `MFCC.cpp` y el recorte central a 63 frames únicamente en `main.cpp`.
+
+También se alineó el preprocesamiento de audio entre la grabadora, el entrenamiento y el sistema de reconocimiento. Los audios del dataset fueron grabados aplicando un filtro pasa-altas con coeficiente `0.995` y una escala `filtered * 2`. Sin embargo, el identificador en vivo inicialmente normalizaba el audio de forma más simple. Se modificó `audio_normalized()` en `main.cpp` para aplicar el mismo filtro y escala usados al grabar el dataset. Esto fue necesario para que el modelo recibiera señales con una distribución similar a las usadas durante el entrenamiento.
+
+Después se revisó el notebook de entrenamiento. El proceso de extracción de características se ajustó para coincidir mejor con el código del ESP32: se agregó preénfasis `0.97`, se usó la misma ventana Hamming, el mismo cálculo de filtros Mel, el mismo logaritmo `log(mel + 1e-6)` y el mismo esquema de características tipo xi-vector híbrido. Estas características consisten en calcular, por cada una de las 20 bandas MFCC, la media, desviación estándar, máximo y mínimo, generando un vector final de 80 valores.
+
+Luego se volvió a procesar el dataset y reentrenar el modelo. El nuevo entrenamiento obtuvo una precisión de validación aproximada de `95.95%`. Después se actualizaron en el firmware los archivos `modelo_hablante.h` y `normalizacion.h` con el modelo y los parámetros nuevos de normalización.
+
+Finalmente, se ajustó la lógica de decisión en el `main.cpp`. Se aumentó el umbral de decisión de `0.65` a `0.75` y el margen de inseguridad de `0.10` a `0.20`. También se limpió el historial de predicciones cuando se detecta silencio o ausencia de voz real. Esto redujo falsos positivos y evitó que predicciones antiguas afectaran nuevas decisiones. Además, el sistema ahora espera a tener una ventana completa de votación antes de declarar un hablante.
+
+Estos cambios fueron necesarios porque en reconocimiento de hablantes no basta con tener un modelo entrenado: el audio en vivo debe pasar por el mismo procesamiento que los audios usados en entrenamiento. Al alinear la grabación, extracción MFCC, normalización, vector xi-vector híbrido y lógica de decisión, el sistema comenzó a reconocer mejor al hablante correcto, especialmente cuando el micrófono está a una distancia similar a la usada en el dataset.
