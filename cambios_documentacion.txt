@@ -1,0 +1,7 @@
+Cambios realizados
+
+- Se documentó el pipeline completo del sistema desde la grabación del dataset hasta la inferencia en ESP32-S3.
+- Se organizó la explicación del proyecto separando entrenamiento, procesamiento, firmware, PSRAM e inferencia.
+- Se añadió una explicación clara del uso de MFCC y Mini Xi-vector.
+- Se justificó el uso de PSRAM para buffers grandes y TensorFlow Lite Micro.
+- Se actualizó la propuesta de README para enlazar la documentación principal.
