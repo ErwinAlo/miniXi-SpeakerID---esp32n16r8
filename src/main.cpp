@@ -2,9 +2,14 @@
 // main.cpp - FINAL 
 // ============================================================
 
+// Sistema de identificación de hablantes en tiempo real utilizando un modelo de red neuronal y extracción de características MFCC en un ESP32-S3. El sistema incluye un módulo de detección de voz (VAD) para filtrar segmentos de audio no vocales, seguido de la extracción de características del xi-vector a partir de la matriz de MFCC. Las características del xi-vector se normalizan y se utilizan como entrada para la red neuronal, que realiza la predicción del hablante activo. Para mejorar la estabilidad de las predicciones, se implementa un sistema de promedio temporal que almacena las probabilidades de cada clase en un buffer circular, permitiendo tomar decisiones más confiables sobre el hablante activo en función de las predicciones recientes.
+// Erwin Andres Lopez Ortega
+// librerias y definiciones 
+
 #include "SpeakerNetwork.h"
 #include "MFCC.h"
 #include "normalizacion.h"
+#include "speaker_labels.h"
 
 #include <Arduino.h>
 #include "driver/i2s.h"
@@ -20,7 +25,6 @@
 // CONFIG
 // ==============================
 
-const int NUM_CLASSES = 4; // Número de hablantes a identificar
 const int NUM_FRAMES = 63; 
 
 //  VAD
@@ -133,6 +137,10 @@ void normalize_xvector(float* xvec){
         xvec[i] = (xvec[i]-XVEC_MEAN[i])/XVEC_STD[i];
 }
 
+static float elapsed_ms(uint32_t start_us, uint32_t end_us) {
+    return (end_us - start_us) / 1000.0f;
+}
+
 // ==============================
 // SETUP
 // ==============================
@@ -152,6 +160,12 @@ void setup(){
     sn = new SpeakerNetwork();
     if(!sn->begin()){
         Serial.println("Error modelo");
+        while(1);
+    }
+
+    if(sn->getNumClasses() != NUM_CLASSES){
+        Serial.printf("ERROR: Modelo tiene %d clases, pero speaker_labels.h define %d\n",
+                      sn->getNumClasses(), NUM_CLASSES);
         while(1);
     }
 
@@ -254,11 +268,13 @@ void loop(){
         }
 
         silencio_frames = 0;
+        uint32_t total_start_us = micros();
 
         // =========================
         // MFCC
         // =========================
 
+        uint32_t mfcc_start_us = micros();
         mfccs(inputAudio_buf, mfcc_temp_buf);
 
         int start = (NUMBER_OF_WINDOWS - NUM_FRAMES)/2;
@@ -270,11 +286,21 @@ void loop(){
         float xvec[XVEC_DIM];
         extract_xvector_features(mfcc_mat_buf,xvec);
         normalize_xvector(xvec);
+        uint32_t mfcc_end_us = micros();
 
         float* inBuf = sn->getInputBuffer();
         for(int i=0;i<XVEC_DIM;i++) inBuf[i]=xvec[i];
 
-        if(sn->predict()){
+        uint32_t inference_start_us = micros();
+        bool prediction_ok = sn->predict();
+        uint32_t inference_end_us = micros();
+
+        if(prediction_ok){
+            Serial.println("\n--------------------------------------------------------");
+            Serial.printf("\nTiempo MFCC: %.2f ms\n", elapsed_ms(mfcc_start_us, mfcc_end_us));
+            Serial.printf("Tiempo Inferencia: %.2f ms\n", elapsed_ms(inference_start_us, inference_end_us));
+            Serial.printf("Tiempo Total: %.2f ms\n", elapsed_ms(total_start_us, inference_end_us));
+            sn->printMemoryInfo();
 
             float* res = sn->getOutputBuffer();
 
@@ -295,7 +321,7 @@ void loop(){
             for(int j=0;j<NUM_CLASSES;j++)
                 avg[j] /= history_count;
 
-            Serial.print("AVG: ");
+            Serial.print("\nAVG: ");
             for(int i=0;i<NUM_CLASSES;i++)
                 Serial.printf("[%d:%.2f] ", i, avg[i]);
             Serial.println();
@@ -325,9 +351,8 @@ void loop(){
             }
 
             if(avg[best] > UMBRAL_DECISION){
-                const char* nombres[4]={"Hija","Hijo","Mama","Papa"};
                 Serial.printf("🎤 HABLANTE: %s (%.1f%%)\n",
-                              nombres[best], avg[best]*100);
+                              SPEAKER_LABELS[best], avg[best]*100);
             }
         }
     }

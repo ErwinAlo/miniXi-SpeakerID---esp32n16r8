@@ -34,5 +34,6 @@ Capturar audio en tiempo real, extraer características de voz y clasificar el h
 ## Documentación
 
 - [Pipeline completo del sistema](PIPELINE_COMPLETO.md)
+- [Pipeline V2 profesional](PIPELINE_V2_PROFESIONAL.md)
 - [Documentación del proceso de entrenamiento](DOCUMENTACION_PROCESO_TRAIN.md)
 - [Cambios realizados](cambios.txt)
