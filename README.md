@@ -65,7 +65,9 @@ Cada persona tiene 8 grabaciones WAV:
 - 5 grabaciones de preguntas naturales tomadas de `preguntas.txt`: saludo, últimas vacaciones, gustos, molestia de la semana y rutina del día.
 - 3 grabaciones adicionales de situaciones de discusión, pensadas para capturar variaciones de voz con más tensión, cambios de tono, pausas y emoción.
 
-Ese diseño busca que el modelo no memorice una sola frase. Las primeras cinco grabaciones dan voz cotidiana y cómoda; las tres de discusión agregan expresividad y variación emocional. Además, `preguntas.txt` propone condiciones de fondo como ventilador, TV, gente hablando lejos, cocina, calle, eco de cuarto, computadora y aire acondicionado para hacer el dataset más realista.
+Ese diseño busca que el modelo no memorice una sola frase. Las primeras cinco grabaciones dan voz cotidiana y cómoda; las tres de discusión agregan expresividad y variación emocional.
+
+El dataset final usado para este modelo es la versión limpia de identificación de hablantes: no se hizo mezcla con ruido, no se generaron variantes por SNR y no existe una clase `ruido`. Las únicas clases entrenadas son personas reales.
 
 Según `Train/procesamiento_log.txt`, el dataset procesado generó:
 
@@ -96,9 +98,9 @@ Cada segmento se representa como un vector de 80 características.
 
 ## Archivos Importantes
 
-- `PIPELINE_V2_PROFESIONAL.md`: explicación técnica completa del pipeline actual.
-- `DOCUMENTACION_PROCESO_TRAIN.md`: documentación del procesamiento y entrenamiento.
-- `preguntas.txt`: preguntas base y ambientes sugeridos para las grabaciones.
+- `PIPELINE_V2_PROFESIONAL.md`: documento principal y actualizado del pipeline actual.
+- `DOCUMENTACION_PROCESO_TRAIN.md`: documentación complementaria del procesamiento y entrenamiento.
+- `preguntas.txt`: preguntas base para las 5 grabaciones naturales por persona.
 - `Train/procesamiento_log.txt`: evidencia del dataset procesado, clases, segmentos y métricas.
 - `Train/generate_speaker_labels.py`: genera `src/speaker_labels.h` desde `Train/labels.npy`.
 - `src/main.cpp`: flujo principal del firmware.
@@ -121,9 +123,8 @@ El entrenamiento actual reporta:
 | Accuracy de validación | 0.9831 |
 | Accuracy del reporte final | 0.98 sobre 236 muestras |
 
-## Documentación
+## Documentación Principal
 
-- [Pipeline V2 profesional](PIPELINE_V2_PROFESIONAL.md)
-- [Pipeline completo del sistema](PIPELINE_COMPLETO.md)
-- [Documentación del proceso de entrenamiento](DOCUMENTACION_PROCESO_TRAIN.md)
-- [Cambios realizados](cambios.txt)
+- **[Pipeline V2 profesional](PIPELINE_V2_PROFESIONAL.md)**: documento principal del proyecto.
+- [Documentación del proceso de entrenamiento](DOCUMENTACION_PROCESO_TRAIN.md): detalle complementario del notebook y los archivos generados.
+- [Preguntas de grabación](preguntas.txt): guía para las 5 grabaciones naturales por persona.

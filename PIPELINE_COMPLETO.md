@@ -1,5 +1,7 @@
 # Pipeline completo del proyecto: MiniXi SpeakerID en ESP32-S3 N16R8
 
+> Documento de referencia general. La versión principal y actualizada del proyecto es [PIPELINE_V2_PROFESIONAL.md](PIPELINE_V2_PROFESIONAL.md). Usar ese documento como fuente principal para entregas, arquitectura, diagrama y descripción del dataset.
+
 ## 1. Descripción general del proyecto
 
 Este proyecto implementa un sistema de identificación de hablantes usando un microcontrolador ESP32-S3 con PSRAM. El objetivo principal es que el dispositivo pueda capturar audio en tiempo real mediante un micrófono I2S, procesar la señal, extraer características de voz y clasificar a qué persona pertenece el audio capturado.
@@ -12,11 +14,13 @@ Grabación de audios → Organización del dataset → Procesamiento en Python �
 
 ## 3. Dataset
 
-Los audios se organizan por carpetas dentro de dataset_fam. Cada carpeta representa una clase del modelo, por ejemplo hija_1, hijo_1, mama y papa. El notebook detecta automáticamente las carpetas para construir las etiquetas.
+Los audios se organizan por carpetas dentro de `dataset_fam/`. Cada carpeta representa una clase del modelo. La versión actual usa únicamente hablantes reales: `hija`, `hijo`, `mama` y `papa`.
+
+El dataset actual no usa mezcla con ruido, no genera variantes por SNR y no incluye una clase `ruido`.
 
 ## 4. Grabación recomendada
 
-Se recomienda grabar varios audios cortos por persona, por ejemplo 5 audios de 20 segundos. Esto proporciona variedad de frases, tono y energía, evitando que el modelo aprenda segmentos demasiado parecidos de una sola grabación larga.
+La versión actual usa 8 grabaciones por persona: 5 audios de preguntas naturales y 3 audios de situaciones de discusión. Esto proporciona variedad de frases, tono, energía y emoción, evitando que el modelo aprenda segmentos demasiado parecidos de una sola grabación larga.
 
 ## 5. Preprocesamiento
 

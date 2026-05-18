@@ -1,11 +1,7 @@
-ventilador
-TV de fondo
-gente hablando lejos
-cocina
-calle
-eco de cuarto
-computadora
-aire acondicionado
+Dataset final usado:
+5 grabaciones naturales por persona + 3 grabaciones de situaciones de discusión.
+
+No se usó mezcla con ruido, no se generaron variantes por SNR y no se entrenó una clase ruido.
 
 -----------------------------------------------------------------
 

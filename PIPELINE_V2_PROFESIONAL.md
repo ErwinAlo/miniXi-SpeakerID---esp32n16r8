@@ -113,7 +113,7 @@ Cada persona tiene 8 grabaciones WAV. La estructura de grabacion es:
 
 Las primeras 5 grabaciones buscan que cada persona hable de forma cotidiana, sin leer frases rigidas. Esto ayuda a capturar variaciones naturales de ritmo, pausas, volumen, entonacion y forma de expresarse. Las 3 grabaciones de discusion agregan situaciones con mayor carga emocional, donde pueden aparecer cambios de tono, velocidad, energia y pronunciacion. La combinacion hace que el modelo vea mas variabilidad real por hablante.
 
-`preguntas.txt` tambien propone condiciones de fondo como ventilador, TV de fondo, gente hablando lejos, cocina, calle, eco de cuarto, computadora y aire acondicionado. Estas condiciones son utiles como variacion ambiental durante la captura, siempre que la voz principal siga siendo clara.
+El dataset final usado en este modelo no incluye aumentacion con ruido. No se mezclo voz con ruido, no se generaron variantes por SNR y tampoco se entreno una clase `ruido`. El objetivo de esta version es identificar unicamente hablantes reales a partir de sus 8 grabaciones por persona.
 
 Segun `Train/procesamiento_log.txt`, el entrenamiento actual proceso 8 archivos por persona:
 

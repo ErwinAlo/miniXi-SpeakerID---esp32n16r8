@@ -1,7 +1,7 @@
 # Documentación del proceso y entrenamiento
 
 ## 1. ¿Qué es este proyecto?
-Este proyecto es un identificador de hablantes basado en un microcontrolador ESP32 con PSRAM. Usa audio grabado de 4 clases (`hija_1`, `hijo_1`, `mama`, `papa`) y entrena un modelo ligero que se ejecuta en el firmware.
+Este proyecto es un identificador de hablantes basado en un microcontrolador ESP32 con PSRAM. Usa audio grabado de 4 clases (`hija`, `hijo`, `mama`, `papa`) y entrena un modelo ligero que se ejecuta en el firmware.
 
 El pipeline se divide en dos etapas principales:
 - `Process`: carga y preprocesa el dataset, genera características tipo Xi-vector.
@@ -11,8 +11,8 @@ El pipeline se divide en dos etapas principales:
 
 El dataset se encuentra en `dataset_fam/` 
 Estructura:
-- `dataset_fam/hija_1/`
-- `dataset_fam/hijo_1/`
+- `dataset_fam/hija/`
+- `dataset_fam/hijo/`
 - `dataset_fam/mama/`
 - `dataset_fam/papa/`
 
@@ -25,15 +25,17 @@ personas = sorted([d for d in os.listdir(dataset_path)
 
 Esto permite detectar dinámicamente las clases de hablante sin codificarlas manualmente.
 
-### Versiones con y sin la clase `ruido`
+### Dataset final sin mezcla SNR ni clase `ruido`
 
-En este proyecto existen dos enfoques de dataset:
-- una versión con la clase `ruido` incluida como categoría separada
-- una versión sin la clase `ruido`, donde solo se entrenan las clases de hablantes reales
+La versión final usada para este modelo solo contiene hablantes reales. No se hizo mezcla de voz con ruido, no se generaron variantes por SNR y no se entrenó una clase `ruido`.
 
-No se usa mezcla de voz y ruido para generar segmentos mixtos. En cambio, el dataset `ruido` se trata como una clase independiente y separada. La razón es que los segmentos mixtos de voz+ruido pueden confundir al modelo: dificultan que aprenda una representación estable del hablante y mezclan dos distribuciones muy diferentes de características.
+Las clases del entrenamiento actual son:
+- `hija`
+- `hijo`
+- `mama`
+- `papa`
 
-Es mejor que el modelo primero distinga claramente "voz real" de "ruido" y luego, si se desea, aplicar una segunda etapa de robustez al ruido. Esto también simplifica el entrenamiento y hace más consistente la normalización, porque los segmentos de ruido puros tienen una distribución muy diferente a la de la voz hablada.
+Cada persona aporta 8 grabaciones WAV: 5 grabaciones de preguntas naturales y 3 grabaciones de situaciones de discusión. Después, el notebook divide esos audios en segmentos de 2 segundos para construir los ejemplos de entrenamiento.
 
 ## 3. Segmentación
 
