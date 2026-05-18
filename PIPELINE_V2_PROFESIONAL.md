@@ -23,6 +23,29 @@ Audio WAV -> dataset_fam -> Python/Notebook -> MFCC -> Mini Xi-vector
 -> Normalizacion -> Inferencia -> Promedio temporal -> Hablante detectado
 ```
 
+Diagrama de arquitectura:
+
+![Diagrama de arquitectura MiniXi-vector + MLP](diagramaXi-vec.png)
+
+### 1.1 Revision del diagrama
+
+El diagrama es correcto como representacion conceptual del sistema V2. Coincide con el firmware y el entrenamiento en los puntos principales:
+
+1. Entrada de audio de 16 kHz, 2 segundos y 32,000 muestras.
+2. Extraccion MFCC mediante preenfasis, ventana Hamming, FFT, banco Mel, log y DCT.
+3. Matriz MFCC de `20 x 63` frames centrales.
+4. Extraccion Mini Xi-vector con media, desviacion estandar, maximo y minimo por banda Mel.
+5. Vector final de `80` caracteristicas.
+6. Normalizacion tipo StandardScaler usando media y desviacion del conjunto de entrenamiento.
+7. Clasificador MLP con capas densas `128 -> 64 -> 32 -> num_classes`.
+8. Salida Softmax y decision final con estados como sin voz, analizando, inseguro o nombre del hablante.
+
+Observaciones importantes:
+
+1. La franja amarilla `Xi-Vector MLP - Identificacion de Hablante` debe leerse como el nombre de la arquitectura completa, no como una capa adicional entre el audio y los MFCC.
+2. Los valores de Dropout del diagrama (`0.30`, `0.30` y `0.20`) coinciden con `Train/procesamiento_log.txt` y con la arquitectura documentada del modelo.
+3. Los tiempos al pie del diagrama solo deben mantenerse si fueron medidos desde el Monitor Serial del ESP32-S3 real. El firmware imprime `Tiempo MFCC`, `Tiempo Inferencia`, `Tiempo Total`, RAM y PSRAM, por lo que esos valores deben venir de una corrida real y no de una estimacion.
+
 ## 2. Hardware objetivo
 
 El hardware objetivo es un modulo ESP32-S3 N16R8:
@@ -72,6 +95,42 @@ El entrenamiento se realiza desde `Train/model.ipynb`. El notebook:
 8. Entrena un MLP de clasificacion.
 9. Exporta el modelo a Keras, TFLite y TFLite INT8.
 10. Genera `Train/modelo_hablante.h` para integrarlo en firmware.
+
+### 3.1.1 Dataset usado
+
+El dataset fuente se organiza en carpetas por hablante dentro de `dataset_fam/`. En la version actual del entrenamiento, las clases encontradas son:
+
+```text
+hija, hijo, mama, papa
+```
+
+Cada persona tiene 8 grabaciones WAV. La estructura de grabacion es:
+
+| Grupo | Cantidad por persona | Contenido | Fuente o intencion |
+| --- | ---: | --- | --- |
+| Preguntas naturales | 5 | saludo, vacaciones, gustos, molestia de la semana y rutina del dia | Primeras cinco preguntas de `preguntas.txt` |
+| Situaciones de discusion | 3 | dialogos o respuestas con mayor tension y variacion emocional | Grabaciones adicionales de discusion |
+
+Las primeras 5 grabaciones buscan que cada persona hable de forma cotidiana, sin leer frases rigidas. Esto ayuda a capturar variaciones naturales de ritmo, pausas, volumen, entonacion y forma de expresarse. Las 3 grabaciones de discusion agregan situaciones con mayor carga emocional, donde pueden aparecer cambios de tono, velocidad, energia y pronunciacion. La combinacion hace que el modelo vea mas variabilidad real por hablante.
+
+`preguntas.txt` tambien propone condiciones de fondo como ventilador, TV de fondo, gente hablando lejos, cocina, calle, eco de cuarto, computadora y aire acondicionado. Estas condiciones son utiles como variacion ambiental durante la captura, siempre que la voz principal siga siendo clara.
+
+Segun `Train/procesamiento_log.txt`, el entrenamiento actual proceso 8 archivos por persona:
+
+| Clase | Archivos WAV | Segmentos finales |
+| --- | ---: | ---: |
+| `hija` | 8 | 294 |
+| `hijo` | 8 | 292 |
+| `mama` | 8 | 295 |
+| `papa` | 8 | 295 |
+| Total | 32 | 1176 |
+
+Cada audio se divide en segmentos de 2 segundos y cada segmento se transforma en un Mini Xi-vector de 80 caracteristicas. El dataset final queda como:
+
+```text
+X: 1176 segmentos x 80 caracteristicas
+y: 1176 etiquetas
+```
 
 Archivos principales generados:
 
